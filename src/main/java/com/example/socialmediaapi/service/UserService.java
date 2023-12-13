@@ -30,8 +30,8 @@ public class UserService {
         return rsl;
     }
 
-    public Optional<User> findByEmail(AuthenticationUser authenticationUser) {
-        var rsl = userRepository.findByEmail(authenticationUser.getEmail());
+    public Optional<User> findByEmail(String email) {
+        var rsl = userRepository.findByEmail(email);
         return rsl;
     }
 

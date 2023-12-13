@@ -1,9 +1,6 @@
 package com.example.socialmediaapi.controller;
 
-import com.example.socialmediaapi.dto.AuthenticationUser;
 import com.example.socialmediaapi.dto.InviteDto;
-import com.example.socialmediaapi.dto.SubscriberDto;
-import com.example.socialmediaapi.dto.UserDto;
 import com.example.socialmediaapi.model.User;
 import com.example.socialmediaapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
 
 
 @RestController
@@ -36,43 +33,73 @@ public class UserController {
     public ResponseEntity<List<User>> findAllUser() {
         var rsl = userService.findAll();
         if (rsl.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.OK, "Users is not found.");
+            throw new IllegalArgumentException("Posts is not found.");
         }
         return ResponseEntity.ok(rsl);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<User> findById(@PathVariable int id) {
         Optional<User> userFind = userService.findById(id);
+        if (userFind.isEmpty()) {
+            throw new IllegalArgumentException("User is not found.");
+        }
         return ResponseEntity.ok(userFind.get());
     }
 
-    @PutMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody User user){
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> findByEmail(@PathVariable String email) {
+        var rsl = userService.findByEmail(email);
+        if (rsl.isEmpty()) {
+            throw new IllegalArgumentException("User is not found by email: " + email);
+        }
+        return ResponseEntity.ok(rsl.get());
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<User> createUser(@RequestBody User user) throws ResponseStatusException {
+        if (user.getEmail() == null || user.getEmail() == "") {
+            throw new IllegalArgumentException("email cannot be empty");
+        }
+        if (user.getPassword() == null || user.getPassword() == "") {
+            throw new IllegalArgumentException("password cannot be empty");
+        }
         User rsl = userService.createUser(user);
         return ResponseEntity.ok(rsl);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<User> findByEmail(@RequestBody AuthenticationUser userDto) {
-        var rsl = userService.findByEmail(userDto);
-        return ResponseEntity.ok(rsl.get());
-    }
-
     @PostMapping("/addFriend")
-    public ResponseEntity<User> addFriend(@RequestBody InviteDto inviteDto){
+    public ResponseEntity<User> addFriend(@RequestBody InviteDto inviteDto) {
+        if (inviteDto.getUser().getEmail() == null) {
+            throw new IllegalArgumentException("user email cannot be empty");
+        }
+        if (inviteDto.getFriend().getEmail() == null) {
+            throw new IllegalArgumentException("friend email cannot be empty");
+        }
         Optional<User> rsl = userService.addFriend(inviteDto);
         return ResponseEntity.ok(rsl.get());
     }
 
-    @PostMapping("/delFriend")
-    public ResponseEntity<User> delFriend(@RequestBody InviteDto inviteDto){
+    @DeleteMapping("/")
+    public ResponseEntity<User> delFriend(@RequestBody InviteDto inviteDto) {
+        if (inviteDto.getUser().getEmail() == null) {
+            throw new IllegalArgumentException("user email cannot be empty");
+        }
+        if (inviteDto.getFriend().getEmail() == null) {
+            throw new IllegalArgumentException("friend email cannot be empty");
+        }
         Boolean rsl = userService.delFriend(inviteDto);
         return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/appruvFriend")
-    public ResponseEntity<Void> appruvFriend(@RequestBody InviteDto inviteDto){
+    public ResponseEntity<Void> appruvFriend(@RequestBody InviteDto inviteDto) {
+        if (inviteDto.getUser().getEmail() == null) {
+            throw new IllegalArgumentException("user email cannot be empty");
+        }
+        if (inviteDto.getFriend().getEmail() == null) {
+            throw new IllegalArgumentException("friend email cannot be empty");
+        }
         System.out.println();
         Boolean rsl = userService.appruvFriend(inviteDto);
         return new ResponseEntity<>(HttpStatus.OK);

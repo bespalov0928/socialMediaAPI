@@ -32,7 +32,7 @@ public class FileController {
         return ResponseEntity.ok(rsl);
     }
 
-    @GetMapping("/")
+    @GetMapping("/name")
     public ResponseEntity<?> getByName(@RequestParam String name) {
         Optional<FileDto> fileDto = fileService.getFileByName(name);
         if (fileDto.isEmpty()) {
