@@ -1,6 +1,8 @@
 package com.example.socialmediaapi.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -12,12 +14,15 @@ public class Invite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank(message = "User must be not empty")
     @OneToOne
     private User user;
 
+    @NotBlank(message = "Friend must be not empty")
     @OneToOne
     private User friend;
 
+    @NotNull(message = "Appruv must be not empty")
     @Column(name = "appruvFriend")
     private Boolean appruvFriend;
 

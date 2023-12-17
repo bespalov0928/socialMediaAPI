@@ -2,6 +2,7 @@ package com.example.socialmediaapi.model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -12,13 +13,23 @@ import java.util.List;
 @Table(name = "users")
 
 public class User {
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+    public User() {}
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @NotBlank(message = "Email must be not empty")
     @Column(name = "email")
     String email;
 
+    @NotBlank(message = "Password must be not empty")
     @Column(name = "password")
     String password;
 

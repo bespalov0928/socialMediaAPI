@@ -2,6 +2,7 @@ package com.example.socialmediaapi.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.Date;
@@ -17,8 +18,12 @@ public class Post {
     private int id;
     @Column(name = "date")
     private Date date;
+
+    @NotBlank(message = "Message must be not empty")
     @Column(name = "mess")
     private String mess;
+
+    @NotBlank(message = "User must be not empty")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

@@ -6,6 +6,7 @@ import com.example.socialmediaapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,19 +58,13 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<User> createUser(@RequestBody User user) throws ResponseStatusException {
-        if (user.getEmail() == null || user.getEmail() == "") {
-            throw new IllegalArgumentException("email cannot be empty");
-        }
-        if (user.getPassword() == null || user.getPassword() == "") {
-            throw new IllegalArgumentException("password cannot be empty");
-        }
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws ResponseStatusException {
         User rsl = userService.createUser(user);
         return ResponseEntity.ok(rsl);
     }
 
     @PostMapping("/addFriend")
-    public ResponseEntity<User> addFriend(@RequestBody InviteDto inviteDto) {
+    public ResponseEntity<User> addFriend(@Valid @RequestBody InviteDto inviteDto) {
         if (inviteDto.getUser().getEmail() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
@@ -81,7 +76,7 @@ public class UserController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<User> delFriend(@RequestBody InviteDto inviteDto) {
+    public ResponseEntity<User> delFriend(@Valid @RequestBody InviteDto inviteDto) {
         if (inviteDto.getUser().getEmail() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
@@ -93,7 +88,7 @@ public class UserController {
     }
 
     @PostMapping("/appruvFriend")
-    public ResponseEntity<Void> appruvFriend(@RequestBody InviteDto inviteDto) {
+    public ResponseEntity<Void> appruvFriend(@Valid @RequestBody InviteDto inviteDto) {
         if (inviteDto.getUser().getEmail() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
