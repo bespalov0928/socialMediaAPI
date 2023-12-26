@@ -19,8 +19,8 @@ import java.util.Optional;
 public class MessageService {
     MessageRepository messageRepository;
     UserRepository userRepository;
-    public List<Message> getAllMessageByUser(UserDto userDto){
-        Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
+    public List<Message> getAllMessageByUser(String email){
+        Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()){
             return new ArrayList<>();
         }

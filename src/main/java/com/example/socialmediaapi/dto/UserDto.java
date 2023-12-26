@@ -7,4 +7,5 @@ import lombok.Data;
 public class UserDto {
     @NotBlank(message = "Email must be not empty")
     private String email;
+    private String password;
 }

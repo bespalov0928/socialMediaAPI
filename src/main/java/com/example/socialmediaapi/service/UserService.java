@@ -2,6 +2,7 @@ package com.example.socialmediaapi.service;
 
 import com.example.socialmediaapi.dto.AuthenticationUser;
 import com.example.socialmediaapi.dto.InviteDto;
+import com.example.socialmediaapi.dto.UserDto;
 import com.example.socialmediaapi.model.Invite;
 import com.example.socialmediaapi.model.User;
 import com.example.socialmediaapi.repositoty.InviteRepository;
@@ -35,18 +36,30 @@ public class UserService {
         return rsl;
     }
 
-    public User createUser(User user) {
+    public User createUser(UserDto userDto) {
+        User user = new User(userDto.getEmail(), userDto.getPassword());
         var rsl = userRepository.save(user);
         return rsl;
     }
 
+    public boolean updateUser(String email, UserDto userDto) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+        User user = userOptional.get();
+        user.setPassword(userDto.getPassword());
+        var rsl = userRepository.save(user);
+        return true;
+    }
+
     public Optional<User> addFriend(InviteDto inviteDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getUser().getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getEmailUser());
         if (optionalUser.isEmpty()) {
             return Optional.empty();
         }
         User userFind = optionalUser.get();
-        Optional<User> optionalFriendFind = userRepository.findByEmail(inviteDto.getFriend().getEmail());
+        Optional<User> optionalFriendFind = userRepository.findByEmail(inviteDto.getEmailFriend());
         User friendFind = optionalFriendFind.get();
 
         List<User> listFriends = userFind.getFriends();
@@ -72,36 +85,13 @@ public class UserService {
         return Optional.of(userFind);
     }
 
-    public Boolean delFriend(InviteDto inviteDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getUser().getEmail());
-        if (optionalUser.isEmpty()) {
-            return false;
-        }
-        User userFind = optionalUser.get();
-        User friendFind = userRepository.findByEmail(inviteDto.getFriend().getEmail()).get();
-
-        Optional<Invite> optionalInvite = inviteRepository.findByUserAndFriend(userFind.getId(), friendFind.getId());
-        if (optionalInvite.isEmpty()) {
-            return false;
-        }
-        Invite invite = optionalInvite.get();
-        if (invite.getAppruvFriend()) {
-            invite.setAppruvFriend(inviteDto.getAppruvFriend());
-            inviteRepository.save(invite);
-            //если удаляется из друзей, значит отписывается
-            SubscriberService subscriberService = new SubscriberService(subscriberRepository, userRepository);
-            subscriberService.updateSubscriber(userFind, friendFind, false);
-        }
-        return true;
-    }
-
     public Boolean appruvFriend(InviteDto inviteDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getUser().getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getEmailUser());
         if (optionalUser.isEmpty()) {
             return false;
         }
         User userFind = optionalUser.get();
-        User friendFind = userRepository.findByEmail(inviteDto.getFriend().getEmail()).get();
+        User friendFind = userRepository.findByEmail(inviteDto.getEmailFriend()).get();
 
         Optional<Invite> optionalInvite = inviteRepository.findByUserAndFriend(userFind.getId(), friendFind.getId());
         if (optionalInvite.isEmpty()) {
@@ -120,4 +110,26 @@ public class UserService {
         return true;
     }
 
+    public Boolean delFriend(InviteDto inviteDto) {
+        Optional<User> optionalUser = userRepository.findByEmail(inviteDto.getEmailUser());
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
+        User userFind = optionalUser.get();
+        User friendFind = userRepository.findByEmail(inviteDto.getEmailFriend()).get();
+
+        Optional<Invite> optionalInvite = inviteRepository.findByUserAndFriend(userFind.getId(), friendFind.getId());
+        if (optionalInvite.isEmpty()) {
+            return false;
+        }
+        Invite invite = optionalInvite.get();
+        if (invite.getAppruvFriend()) {
+            invite.setAppruvFriend(inviteDto.getAppruvFriend());
+            inviteRepository.save(invite);
+            //если удаляется из друзей, значит отписывается
+            SubscriberService subscriberService = new SubscriberService(subscriberRepository, userRepository);
+            subscriberService.updateSubscriber(userFind, friendFind, false);
+        }
+        return true;
+    }
 }

@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class InviteDto {
     @NotBlank(message = "User must be not empty")
-    private UserDto user;
+    private String emailUser;
 
     @NotBlank(message = "Friend must be not empty")
-    private UserDto friend;
+    private String emailFriend;
 
     @NotNull(message = "Appruv must be not empty")
     private Boolean appruvFriend;

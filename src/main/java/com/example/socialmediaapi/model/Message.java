@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Entity
 @Table(name = "Messages")
@@ -11,6 +13,10 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
+    @Column(name = "date")
+    private Date date;
+
     @NotBlank(message = "Message must be not empty")
     @Column(name = "mess")
     String mess;

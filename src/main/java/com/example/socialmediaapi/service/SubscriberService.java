@@ -19,8 +19,8 @@ public class SubscriberService {
     SubscriberRepository subscriberRepository;
     UserRepository userRepository;
 
-    public List<Subscriber> findSubscriberByUser(UserDto userDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
+    public List<Subscriber> findSubscriberByUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
             return new ArrayList<>();
         }
@@ -30,12 +30,12 @@ public class SubscriberService {
     }
 
     public Boolean subscribe(SubscriberDto subscriberDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getUser().getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getEmailUser());
         if (optionalUser.isEmpty()) {
             return false;
         }
         User userFind = optionalUser.get();
-        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getSubscriber().getEmail());
+        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getEmailSubscriber());
         if (optionalSubscriber.isEmpty()) {
             return false;
         }
@@ -50,13 +50,13 @@ public class SubscriberService {
     }
 
     public Boolean unsubscribe(SubscriberDto subscriberDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getUser().getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getEmailUser());
         if (optionalUser.isEmpty()) {
             return false;
         }
         User userFind = optionalUser.get();
 
-        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getSubscriber().getEmail());
+        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getEmailSubscriber());
         if (optionalSubscriber.isEmpty()) {
             return false;
         }

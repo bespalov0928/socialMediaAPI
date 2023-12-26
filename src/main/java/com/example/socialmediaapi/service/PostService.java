@@ -33,7 +33,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public Optional<Post> findAllWitrUserAndFiles(int id) {
         final Optional<Post> posts = postRepository.findById(id);
-        System.out.println("posts: "+posts);
         return posts;
     }
 
@@ -41,7 +40,6 @@ public class PostService {
         Optional<User> user = userService.findById(user_id);
         System.out.println("findAll");
         var rsl = postRepository.findAllByUser(user.get(), pageable);
-//        var rsl = postRepository.findAllByUser(user.get());
         for (Post post:rsl) {
             System.out.println("post: "+post);
         }
@@ -79,7 +77,12 @@ public class PostService {
         return Optional.of(postFind);
     }
 
-    public void delete(int post_id) {
+    public boolean delete(int post_id) {
+        var rsl = postRepository.findById(post_id);
+        if (rsl.isEmpty()){
+            return false;
+        }
         postRepository.deleteById(post_id);
+        return true;
     }
 }

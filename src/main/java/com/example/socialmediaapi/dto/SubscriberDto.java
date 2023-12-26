@@ -9,10 +9,10 @@ import lombok.Getter;
 public class SubscriberDto {
 
     @NotBlank(message = "User must be not empty")
-    private UserDto user;
+    private String emailUser;
 
     @NotBlank(message = "Subscriber must be not empty")
-    private UserDto subscriber;
+    private String emailSubscriber;
 
     @NotNull(message = "Active must be not empty")
     private Boolean active;
