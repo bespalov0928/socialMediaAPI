@@ -26,8 +26,10 @@ public class Invite {
     @Column(name = "appruvFriend")
     private Boolean appruvFriend;
 
-    public Invite(User userFind, User user) {
-
+    public Invite(User user, User userFind, boolean appruvFriend) {
+        this.user = user;
+        this.friend = userFind;
+        this.appruvFriend = appruvFriend;
     }
 
     public Invite() {

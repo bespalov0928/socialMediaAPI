@@ -29,7 +29,7 @@ import java.util.Optional;
 @Tag(name = "File", description = "The file API")
 @RestController
 @RequestMapping("api/v1/file")
-@Data
+//@Data
 @AllArgsConstructor
 public class FileController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());

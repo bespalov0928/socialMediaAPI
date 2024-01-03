@@ -1,6 +1,5 @@
 package com.example.socialmediaapi.model;
 
-import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -18,8 +17,22 @@ public class User {
         this.email = email;
         this.password = password;
     }
-    public User() {}
 
+    public User(int id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(int id, String email, String password, List<User> userList) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.friends = userList;
+    }
+
+    public User() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +66,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

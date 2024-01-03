@@ -14,9 +14,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,12 +33,18 @@ import java.util.Optional;
 @Tag(name = "User", description = "The User API")
 @RestController
 @RequestMapping("api/v1/user")
+//@NoArgsConstructor
 @AllArgsConstructor
+//@Setter
+//@RequiredArgsConstructor
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
-    private final ObjectMapper objectMapper;
-    UserService userService;
+    private ObjectMapper objectMapper;
+    private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Operation(summary = "Gets all users")
     @ApiResponses(value = {
@@ -58,10 +68,11 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<List<User>> findAllUser() {
         var rsl = userService.findAll();
-        if (rsl.isEmpty()) {
-            throw new IllegalArgumentException("User list is empty");
-        }
-        return ResponseEntity.ok(rsl);
+//        if (rsl.isEmpty()) {
+//            throw new IllegalArgumentException("User list is empty");
+//        }
+//        return ResponseEntity.ok(rsl);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @Operation(summary = "Search by user ID")
@@ -89,7 +100,7 @@ public class UserController {
         if (userFind.isEmpty()) {
             throw new IllegalArgumentException("User is not found.");
         }
-        return ResponseEntity.ok(userFind.get());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userFind.get());
     }
 
     @Operation(summary = "Search by user Email")
@@ -117,7 +128,7 @@ public class UserController {
         if (rsl.isEmpty()) {
             throw new IllegalArgumentException("User is not found by email: " + email);
         }
-        return ResponseEntity.ok(rsl.get());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl.get());
     }
 
     @Operation(summary = "Create user")
@@ -140,19 +151,20 @@ public class UserController {
                     })
     })
     @PostMapping("/")
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserDto userDto) throws ResponseStatusException {
-        if (userDto.getEmail() == null) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws ResponseStatusException {
+        User rsl = null;
+        if (user.getEmail() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
-        if (userDto.getPassword() == null) {
+        if (user.getPassword() == null) {
             throw new IllegalArgumentException("User password cannot be empty");
         }
         try {
-            User rsl = userService.createUser(userDto);
-        } catch (Exception e){
+            rsl = userService.createUser(user);
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error save user");
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @Operation(summary = "Update user")
@@ -175,13 +187,13 @@ public class UserController {
                     })
     })
     @PutMapping("/{email}")
-    public ResponseEntity<Void> updateUser(@PathVariable String email, @RequestBody UserDto userDto) throws ResponseStatusException {
+    public ResponseEntity<User> updateUser(@PathVariable String email, @RequestBody User user) throws ResponseStatusException {
         Optional<User> userOptional = userService.findByEmail(email);
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("User is not found by email: " + email);
         }
-        var rsl = userService.updateUser(email, userDto);
-        return ResponseEntity.ok().build();
+        var rsl = userService.updateUser(email, user);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl.get());
     }
 
     @Operation(summary = "Request for friendship")
@@ -212,7 +224,7 @@ public class UserController {
             throw new IllegalArgumentException("friend email cannot be empty");
         }
         Optional<User> rsl = userService.addFriend(inviteDto);
-        return ResponseEntity.ok(rsl.get());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl.get());
     }
 
     @Operation(summary = "Friendship request approval")
@@ -233,7 +245,7 @@ public class UserController {
                     })
     })
     @PutMapping("/friend")
-    public ResponseEntity<Void> appruvFriend(@Valid @RequestBody InviteDto inviteDto) {
+    public ResponseEntity<Boolean> appruvFriend(@Valid @RequestBody InviteDto inviteDto) {
         if (inviteDto.getEmailUser() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
@@ -242,7 +254,7 @@ public class UserController {
         }
         System.out.println();
         Boolean rsl = userService.appruvFriend(inviteDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @Operation(summary = "Request for removal from friends")
@@ -265,7 +277,7 @@ public class UserController {
                     })
     })
     @DeleteMapping("/friend")
-    public ResponseEntity<HttpStatus> delFriend(@Valid @RequestBody InviteDto inviteDto) {
+    public ResponseEntity<Boolean> delFriend(@Valid @RequestBody InviteDto inviteDto) {
         if (inviteDto.getEmailUser() == null) {
             throw new IllegalArgumentException("user email cannot be empty");
         }
@@ -273,7 +285,8 @@ public class UserController {
             throw new IllegalArgumentException("friend email cannot be empty");
         }
         Boolean rsl = userService.delFriend(inviteDto);
-        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
+//        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)

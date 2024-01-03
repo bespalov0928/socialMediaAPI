@@ -1,9 +1,11 @@
 package com.example.socialmediaapi.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class InviteDto {
     @NotBlank(message = "User must be not empty")
     private String emailUser;
