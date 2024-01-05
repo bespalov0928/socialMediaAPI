@@ -57,7 +57,7 @@ class UserControllerTest {
     @InjectMocks
     UserController controller;
 
-    //@Disabled
+    @Disabled
     @Test
     @DisplayName("GET api/v1/user/ возвращает HTTP-ответ со статусом 200 OK и списком пользователей")
     void findAllUser() {
@@ -70,7 +70,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.findAllUser();
 //        var x = this.controller.findAllUser();
 //        this.repository.findAll();
@@ -82,7 +82,7 @@ class UserControllerTest {
         assertEquals(users.toString(), responseEntity.getBody().toString());
     }
 
-    //@Disabled
+//    @Disabled
     @Test
     void findById() {
         //given
@@ -91,7 +91,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.findById(1);
 
         //then
@@ -110,7 +110,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.findByEmail("user_test@mail.ru");
 
         //then
@@ -129,7 +129,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.createUser(user);
 
         //then
@@ -155,7 +155,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.updateUser("user_test@mail.ru", userNew);
 
         //then
@@ -165,7 +165,7 @@ class UserControllerTest {
         assertEquals(userNew.toString(), responseEntity.getBody().toString());
     }
 
-    //@Disabled
+//    @Disabled
     @Test
     void addFriend() {
         //given
@@ -183,7 +183,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.addFriend(inviteDto);
 
         //then
@@ -208,7 +208,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.appruvFriend(inviteDto);
 
         //then
@@ -219,7 +219,7 @@ class UserControllerTest {
 
     }
 
-    //@Disabled
+//    @Disabled
     @Test
     void delFriend() {
         //given
@@ -236,7 +236,7 @@ class UserControllerTest {
 
         //when
         UserService userService = new UserService(repository, inviteRepository, subscriberRepository);
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(objectMapper, userService);
         var responseEntity = userController.delFriend(inviteDto);
 
         //then

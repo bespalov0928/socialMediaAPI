@@ -46,7 +46,8 @@ public class UserService {
     }
 
     public Optional<User> findById(int id) {
-        var rsl = userRepository.findByIdWithFriends(id);
+        var rsl = userRepository.findById(id);
+//        var rsl = userRepository.findByIdWithFriends(id);
         return rsl;
     }
 
@@ -85,11 +86,11 @@ public class UserService {
         User userFind = optionalUser.get();
         User friendFind = optionalFriendFind.get();
 
-        List<User> listFriends = userFind.getFriends();
-        if (!listFriends.contains(friendFind)) {
-            listFriends.add(friendFind);
-            userRepository.save(userFind);
-        }
+//        List<User> listFriends = userFind.getFriends();
+//        if (!listFriends.contains(friendFind)) {
+//            listFriends.add(friendFind);
+//            userRepository.save(userFind);
+//        }
 
         Optional<Invite> optionalInvite = inviteRepository.findByUserAndFriend(userFind.getId(), friendFind.getId());
         if (optionalInvite.isEmpty()) {

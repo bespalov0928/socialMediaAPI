@@ -50,29 +50,29 @@ public class SubscriberService {
     }
 
     public Boolean unsubscribe(SubscriberDto subscriberDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getEmailUser());
-        if (optionalUser.isEmpty()) {
-            return false;
-        }
-        User userFind = optionalUser.get();
-
-        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getEmailSubscriber());
-        if (optionalSubscriber.isEmpty()) {
-            return false;
-        }
-        User subscriberFind = optionalSubscriber.get();
-
-        List<User> listSubscribers = userFind.getSubscribersUser();
-        if (!listSubscribers.contains(subscriberFind)) {
-            listSubscribers.add(subscriberFind);
-            userRepository.save(userFind);
-        }
-        Optional<Subscriber> optionalSubscriberFind = subscriberRepository.findByUserAndSubscriber(userFind.getId(), subscriberFind.getId());
-        if (optionalSubscriberFind.isEmpty()) {
-            return false;
-        }
-
-        updateSubscriber(userFind, subscriberFind, subscriberDto.getActive());
+//        Optional<User> optionalUser = userRepository.findByEmail(subscriberDto.getEmailUser());
+//        if (optionalUser.isEmpty()) {
+//            return false;
+//        }
+//        User userFind = optionalUser.get();
+//
+//        Optional<User> optionalSubscriber = userRepository.findByEmail(subscriberDto.getEmailSubscriber());
+//        if (optionalSubscriber.isEmpty()) {
+//            return false;
+//        }
+//        User subscriberFind = optionalSubscriber.get();
+//
+//        List<User> listSubscribers = userFind.getSubscribersUser();
+//        if (!listSubscribers.contains(subscriberFind)) {
+//            listSubscribers.add(subscriberFind);
+//            userRepository.save(userFind);
+//        }
+//        Optional<Subscriber> optionalSubscriberFind = subscriberRepository.findByUserAndSubscriber(userFind.getId(), subscriberFind.getId());
+//        if (optionalSubscriberFind.isEmpty()) {
+//            return false;
+//        }
+//
+//        updateSubscriber(userFind, subscriberFind, subscriberDto.getActive());
         return true;
     }
 
@@ -100,11 +100,11 @@ public class SubscriberService {
     }
 
     public boolean ConnectSubcriber(User user, User subscriber){
-        List<User> listSubscribers = user.getSubscribersUser();
-        if (!listSubscribers.contains(subscriber)) {
-            listSubscribers.add(subscriber);
-            userRepository.save(user);
-        }
+//        List<User> listSubscribers = user.getSubscribersUser();
+//        if (!listSubscribers.contains(subscriber)) {
+//            listSubscribers.add(subscriber);
+//            userRepository.save(user);
+//        }
         return true;
     }
 

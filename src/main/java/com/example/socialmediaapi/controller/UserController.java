@@ -1,7 +1,6 @@
 package com.example.socialmediaapi.controller;
 
 import com.example.socialmediaapi.dto.InviteDto;
-import com.example.socialmediaapi.dto.UserDto;
 import com.example.socialmediaapi.model.User;
 import com.example.socialmediaapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,19 +28,12 @@ import java.util.Optional;
 
 @Tag(name = "User", description = "The User API")
 @RestController
-@RequestMapping("api/v1/user")
-//@NoArgsConstructor
+@RequestMapping("/api/v1/user")
 @AllArgsConstructor
-//@Setter
-//@RequiredArgsConstructor
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @Operation(summary = "Gets all users")
     @ApiResponses(value = {
@@ -65,12 +54,12 @@ public class UserController {
                                     schema = @Schema(implementation = HttpStatus.class))
                     })
     })
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<User>> findAllUser() {
         var rsl = userService.findAll();
-//        if (rsl.isEmpty()) {
-//            throw new IllegalArgumentException("User list is empty");
-//        }
+        if (rsl.isEmpty()) {
+            throw new IllegalArgumentException("User list is empty");
+        }
 //        return ResponseEntity.ok(rsl);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
@@ -122,7 +111,7 @@ public class UserController {
                                     schema = @Schema(implementation = HttpStatus.class))
                     })
     })
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<User> findByEmail(@PathVariable String email) {
         var rsl = userService.findByEmail(email);
         if (rsl.isEmpty()) {
@@ -150,7 +139,7 @@ public class UserController {
                                     schema = @Schema(implementation = HttpStatus.class))
                     })
     })
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws ResponseStatusException {
         User rsl = null;
         if (user.getEmail() == null) {

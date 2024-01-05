@@ -1,7 +1,6 @@
 package com.example.socialmediaapi.controller;
 
 import com.example.socialmediaapi.dto.SubscriberDto;
-import com.example.socialmediaapi.dto.UserDto;
 import com.example.socialmediaapi.model.Subscriber;
 import com.example.socialmediaapi.service.SubscriberService;
 import com.example.socialmediaapi.service.UserService;

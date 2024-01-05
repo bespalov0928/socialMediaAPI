@@ -1,23 +1,40 @@
 package com.example.socialmediaapi;
 
-//import io.swagger.v3.oas.models.OpenAPI;
-//import io.swagger.v3.oas.models.info.Contact;
-//import io.swagger.v3.oas.models.info.Info;
-//import io.swagger.v3.oas.models.info.License;
-//import io.swagger.v3.oas.models.servers.Server;
-//import org.springdoc.core.GroupedOpenApi;
-//import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 @SpringBootApplication
 public class SocialMediaApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(SocialMediaApiApplication.class, args);
     }
+
+//    @Bean
+//    public CommandLineRunner commandLineRunner(
+//            AuthenticationService service
+//    ) {
+//        return args -> {
+//            var admin = RegisterRequest.builder()
+////                    .firstname("Admin")
+////                    .lastname("Admin")
+//                    .email("admin1@mail.com")
+//                    .password("password")
+//                    .role(ADMIN)
+//                    .build();
+//            System.out.println("Admin token: " + service.register(admin).getAccessToken());
+//
+//            var manager = RegisterRequest.builder()
+////                    .firstname("Admin")
+////                    .lastname("Admin")
+//                    .email("user1@mail.com")
+//                    .password("password")
+//                    .role(USER)
+//                    .build();
+//            System.out.println("Manager token: " + service.register(manager).getAccessToken());
+//
+//        };
+//    }
+
 
 //    @Bean
 //    public GroupedOpenApi publicUserApi() {
