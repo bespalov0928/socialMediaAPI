@@ -3,6 +3,7 @@ package com.example.socialmediaapi.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+@Builder
 @Data
 public class PostDto {
     private int id;

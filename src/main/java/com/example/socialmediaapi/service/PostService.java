@@ -22,7 +22,7 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
-    private final FileRepository fileRepository;
+//    private final FileRepository fileRepository;
     private final FileService fileService;
 
     public Optional<Post> findPostId(int id) {
@@ -47,10 +47,11 @@ public class PostService {
     }
 
     public Post create(PostDto postDto, List<FileDto> fileDtoList) {
-        Post postNew = new Post();
-        postNew.setMess(postDto.getMess());
-        postNew.setDate(new Date());
-        postNew.setUser(userService.findById(postDto.getUser_id()).get());
+//        Post postNew = new Post();
+//        postNew.setMess(postDto.getMess());
+//        postNew.setDate(new Date());
+//        postNew.setUser(userService.findById(postDto.getUser_id()).get());
+        Post postNew = Post.builder().mess(postDto.getMess()).date(new Date()).user(userService.findById(postDto.getUser_id()).get()).build();
         Post postSave = postRepository.save(postNew);
         ArrayList<File> files = new ArrayList<>();
         for (FileDto fileDto : fileDtoList) {

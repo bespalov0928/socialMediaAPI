@@ -46,8 +46,8 @@ public class UserService {
     }
 
     public Optional<User> findById(int id) {
-        var rsl = userRepository.findById(id);
-//        var rsl = userRepository.findByIdWithFriends(id);
+//        var rsl = userRepository.findById(id);
+        var rsl = userRepository.findByIdWithFriends(id);
         return rsl;
     }
 

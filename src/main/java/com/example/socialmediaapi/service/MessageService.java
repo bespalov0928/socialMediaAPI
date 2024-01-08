@@ -34,9 +34,10 @@ public class MessageService {
             return Optional.empty();
         }
         User user = optionalUser.get();
-        Message message = new Message();
-        message.setUser(user);
-        message.setMess(messageDto.getMess());
+//        Message message = new Message();
+//        message.setUser(user);
+//        message.setMess(messageDto.getMess());
+        Message message = Message.builder().user(user).mess(messageDto.getMess()).build();
         var rsl = messageRepository.save(message);
         return Optional.of(rsl);
     }

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,7 +65,7 @@ public class PostControler {
         if (postFind.isEmpty()) {
             throw new IllegalArgumentException("Post was not found by id");
         }
-        return ResponseEntity.ok(postFind.get());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postFind.get());
     }
 
     @Operation(summary = "Search by post User")
@@ -93,7 +94,7 @@ public class PostControler {
         if (rsl.isEmpty()) {
             throw new IllegalArgumentException("Users is not found by id: " + user_id);
         }
-        return ResponseEntity.ok(rsl);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
 
     }
 
@@ -116,14 +117,14 @@ public class PostControler {
                     })
     })
     @PostMapping("/")
-    public ResponseEntity<Post> createPost(@RequestPart("post") PostDto post, @RequestPart("file") MultipartFile file) throws IOException {
+    public ResponseEntity<Post> createPost(@RequestPart("post") PostDto post, @RequestPart("file") MultipartFile file) {
         Post postNew = null;
         try {
             postNew = postService.create(post, List.of(new FileDto(file.getOriginalFilename(), file.getBytes())));
         } catch (Exception e) {
             throw new IllegalArgumentException("Error save Post");
         }
-        return ResponseEntity.ok(postNew);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postNew);
     }
 
     @Operation(summary = "Update post")
@@ -150,9 +151,10 @@ public class PostControler {
         Optional<Post> postUpdate = postService.update(post, List.of(new FileDto(file.getOriginalFilename(), file.getBytes())));
         if (postUpdate.isEmpty()) {
             throw new IllegalArgumentException("Not found the post with id: " + postUpdate.get().getMess());
-        } else {
-            return ResponseEntity.ok(postUpdate.get());
+//        } else {
+//            return ResponseEntity.ok(postUpdate.get());
         }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postUpdate.get());
     }
 
     @Operation(summary = "Delete post")

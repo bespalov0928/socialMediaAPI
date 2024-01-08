@@ -39,7 +39,7 @@ public class User implements UserDetails {
         this.id = id;
         this.email = email;
         this.password = password;
-//        this.friends = userList;
+        this.friends = userList;
     }
 
     @Id

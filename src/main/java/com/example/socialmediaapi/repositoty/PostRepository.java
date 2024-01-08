@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
+//public interface PostRepository {
     public List<Post> findAllByUser(User user, Pageable pageable);
 
-    @Query("select p from Post p join fetch p.user join fetch p.files where p.id = :id")
+//    @Query("select p from Post p join fetch p.user join fetch p.files where p.id = :id")
     Optional<Post> findById(@Param("id") int id);
 }

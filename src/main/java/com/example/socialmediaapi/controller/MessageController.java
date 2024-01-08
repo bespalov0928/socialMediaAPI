@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -64,7 +65,7 @@ public class MessageController {
             throw new IllegalArgumentException("Messages is not found, by user: " + email);
         }
 
-        return ResponseEntity.ok(rsl);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @Operation(summary = "Create a message")
@@ -87,7 +88,7 @@ public class MessageController {
                     })
     })
     @PostMapping("/")
-    public ResponseEntity<Void> addMessage(@RequestBody MessageDto messageDto) {
+    public ResponseEntity<Boolean> addMessage(@RequestBody MessageDto messageDto) {
         if (messageDto.getUser().getEmail() == null || messageDto.getUser().getEmail() == "") {
             throw new ResponseStatusException(HttpStatus.OK, "Email cannot be empty");
         }
@@ -95,7 +96,8 @@ public class MessageController {
         if (rsl.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.OK, "User was not found by email");
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+//        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(true);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)

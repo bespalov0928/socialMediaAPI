@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -32,7 +35,7 @@ public class Invite {
         this.appruvFriend = appruvFriend;
     }
 
-    public Invite() {
-
-    }
+//    public Invite() {
+//
+//    }
 }

@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,7 @@ public class SubscriberController {
         if (rsl.isEmpty()) {
             throw new IllegalArgumentException("Subscribers is not found.");
         }
-        return ResponseEntity.ok(rsl);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @Operation(summary = "Create a subscribe")
@@ -79,7 +80,7 @@ public class SubscriberController {
                     })
     })
     @PostMapping("/")
-    public ResponseEntity subscribe(@RequestBody SubscriberDto subscriberDto) {
+    public ResponseEntity<Boolean> subscribe(@RequestBody SubscriberDto subscriberDto) {
         if (subscriberDto.getEmailUser() == null) {
             throw new IllegalArgumentException("User email cannot be empty");
         }
@@ -87,7 +88,8 @@ public class SubscriberController {
             throw new IllegalArgumentException("Subscriber email cannot be empty");
         }
         Boolean rsl = subscriberService.subscribe(subscriberDto);
-        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
 
     }
 
@@ -121,7 +123,8 @@ public class SubscriberController {
             throw new IllegalArgumentException("Subscriber email cannot be empty");
         }
         Boolean rsl = subscriberService.unsubscribe(subscriberDto);
-        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
