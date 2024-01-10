@@ -74,7 +74,7 @@ class PostControlerTest {
         doReturn(postList).when(this.postService).findAll(1, PageRequest.of(0, 10, Sort.by("date").descending()));
 
         //when
-        ResponseEntity responseEntity = this.postController.findAll(1, 0, 10);
+        ResponseEntity responseEntity = this.postController.findAllUser(1, 0, 10);
 
         //then
         assertNotNull(responseEntity);

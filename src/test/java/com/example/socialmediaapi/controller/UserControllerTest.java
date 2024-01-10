@@ -1,44 +1,26 @@
 package com.example.socialmediaapi.controller;
 
 import com.example.socialmediaapi.dto.InviteDto;
-import com.example.socialmediaapi.model.Invite;
 import com.example.socialmediaapi.model.User;
-import com.example.socialmediaapi.repositoty.InviteRepository;
-import com.example.socialmediaapi.repositoty.SubscriberRepository;
-import com.example.socialmediaapi.repositoty.UserRepository;
 import com.example.socialmediaapi.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 
-//@DataJpaTest
 @ExtendWith(MockitoExtension.class)
-//@Sql(scripts = "/sql/test_users.sql")
 class UserControllerTest {
-//    @Mock
-//    UserRepository repository;
-//
-//    @Mock
-//    InviteRepository inviteRepository;
-//
-//    @Mock
-//    SubscriberRepository subscriberRepository;
-//
-//    @Mock
-//    ObjectMapper objectMapper;
 
     @Mock
     UserService userService;
@@ -136,10 +118,12 @@ class UserControllerTest {
     void addFriend() {
         //given
         InviteDto inviteDto = InviteDto.builder().emailUser("user_test@mail.ru").emailFriend("admin_test@mail.ru").appruvFriend(false).build();
-        User user = User.builder().id(1).firstname("user_test").email("user_test@mail.ru").password("user_test").friends(new ArrayList<User>()).build();
+        User user = User.builder().id(1).firstname("user_test").email("user_test@mail.ru").password("user_test").friends(new ArrayList<User>()).subscribersUser(new ArrayList<User>()).build();
         User userFriend = User.builder().id(2).firstname("admin_test").email("admin_test@mail.ru").password("admin_test").build();
         user.getFriends().add(userFriend);
         doReturn(Optional.of(user)).when(this.userService).addFriend(inviteDto);
+        user.getSubscribersUser().add(userFriend);
+        doReturn(Optional.of(user)).when(this.userService).addSubscriber(inviteDto);
 
         //when
         var responseEntity = this.userController.addFriend(inviteDto);
@@ -181,6 +165,26 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, responseEntity.getHeaders().getContentType());
         assertTrue(responseEntity.getBody());
+    }
+
+    @Test
+    void addSubscriber() {
+        //given
+        InviteDto inviteDto = InviteDto.builder().emailUser("user_test@mail.ru").emailFriend("admin_test@mail.ru").appruvFriend(true).build();
+
+        User user = User.builder().id(1).firstname("user_test").email("user_test@mail.ru").password("user_test").subscribersUser(new ArrayList<User>()).build();
+        User userFriend = User.builder().id(2).firstname("admin_test").email("admin_test@mail.ru").password("admin_test").build();
+        user.getSubscribersUser().add(userFriend);
+        doReturn(Optional.of(user)).when(this.userService).addSubscriber(inviteDto);
+
+        //when
+        var responseEntity = this.userController.addSubscriber(inviteDto);
+
+        //then
+        assertNotNull(responseEntity);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, responseEntity.getHeaders().getContentType());
+        assertEquals(user.toString(), responseEntity.getBody().toString());
     }
 
 }

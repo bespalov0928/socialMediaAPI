@@ -5,14 +5,16 @@ import com.example.socialmediaapi.model.User;
 import com.example.socialmediaapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.*;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
     private final ObjectMapper objectMapper;
     private final UserService userService;
+//    private final SubscriberService subscriberService;
 
     @Operation(summary = "Gets all users")
     @ApiResponses(value = {
@@ -212,8 +215,11 @@ public class UserController {
         if (inviteDto.getEmailFriend() == null) {
             throw new IllegalArgumentException("friend email cannot be empty");
         }
-        Optional<User> rsl = userService.addFriend(inviteDto);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl.get());
+        //отправка приглашения в друзья
+        Optional<User> rslFriend = userService.addFriend(inviteDto);
+        //добавление в качестве подписчика
+        Optional<User> rslSub = userService.addSubscriber(inviteDto);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
     }
 
     @Operation(summary = "Friendship request approval")
@@ -242,7 +248,11 @@ public class UserController {
             throw new IllegalArgumentException("friend email cannot be empty");
         }
         System.out.println();
+        //подтверждение приглашения в друзья
         Boolean rsl = userService.appruvFriend(inviteDto);
+        //добавление в качестве подписчика
+        Optional<User> rslSub = userService.addSubscriber(InviteDto.builder().emailFriend(inviteDto.getEmailUser()).emailUser(inviteDto.getEmailFriend()).build());
+
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
@@ -273,10 +283,77 @@ public class UserController {
         if (inviteDto.getEmailFriend() == null) {
             throw new IllegalArgumentException("friend email cannot be empty");
         }
+        //удаление из друзей
         Boolean rsl = userService.delFriend(inviteDto);
+        Boolean rsl1 = userService.delFriend(InviteDto.builder().emailFriend(inviteDto.getEmailUser()).emailUser(inviteDto.getEmailFriend()).build());
+        //отписка
+        Optional<User> rslSub =  userService.delSubscriber(inviteDto);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
-//        return new ResponseEntity<>(rsl ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
     }
+
+    @Operation(summary = "Request for subscriber")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Request for subscriber successful",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = User.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "user and friend email cannot be empty",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = HttpStatus.class))
+                    })
+    })
+    @PostMapping("/subscriber")
+    public ResponseEntity<User> addSubscriber(@Valid @RequestBody InviteDto inviteDto) {
+        if (inviteDto.getEmailUser() == null) {
+            throw new IllegalArgumentException("user email cannot be empty");
+        }
+        if (inviteDto.getEmailFriend() == null) {
+            throw new IllegalArgumentException("friend email cannot be empty");
+        }
+        //добавление в качестве подписчика
+        Optional<User> rslSub = userService.addSubscriber(inviteDto);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
+    }
+
+    @Operation(summary = "Request for removal from subscriber")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Request for removal from subscriber successful",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = User.class))
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "user and subscriber email cannot be empty",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = HttpStatus.class))
+                    })
+    })
+    @DeleteMapping("/subscriber")
+    public ResponseEntity<User> delSubscriber(@Valid @RequestBody InviteDto inviteDto) {
+        if (inviteDto.getEmailUser() == null) {
+            throw new IllegalArgumentException("user email cannot be empty");
+        }
+        if (inviteDto.getEmailFriend() == null) {
+            throw new IllegalArgumentException("friend email cannot be empty");
+        }
+        Optional<User> rslSub =  userService.delSubscriber(inviteDto);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
+    }
+
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {

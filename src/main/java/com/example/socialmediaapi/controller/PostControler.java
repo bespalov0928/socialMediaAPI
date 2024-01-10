@@ -87,7 +87,7 @@ public class PostControler {
                     })
     })
     @GetMapping("/{user_id}")
-    public ResponseEntity<List<Post>> findAll(@PathVariable int user_id,
+    public ResponseEntity<List<Post>> findAllUser(@PathVariable int user_id,
                                               @RequestParam(value = "offset", defaultValue = "0") @Min(0) Integer offset,
                                               @RequestParam(value = "limit", defaultValue = "1000") @Min(1) @Max(1000) Integer limit) {
         var rsl = postService.findAll(user_id, PageRequest.of(offset, limit, Sort.by("date").descending()));
