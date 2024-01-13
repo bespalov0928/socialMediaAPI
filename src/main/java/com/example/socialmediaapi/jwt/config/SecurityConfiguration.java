@@ -32,6 +32,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req -> req
 //                                .requestMatchers("/**").permitAll()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/user/**").hasAuthority(Permission.ADMIN_WRITE.getPermission())
                                 .requestMatchers(HttpMethod.POST, "/api/v1/user/**").hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.ADMIN_READ.getPermission())
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/user/**").hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.ADMIN_READ.getPermission())

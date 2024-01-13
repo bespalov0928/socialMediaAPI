@@ -4,6 +4,7 @@ import com.example.socialmediaapi.dto.FileDto;
 import com.example.socialmediaapi.dto.PostDto;
 import com.example.socialmediaapi.model.Post;
 import com.example.socialmediaapi.service.PostService;
+import com.example.socialmediaapi.swagger.SwaggerPostController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,32 +35,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Post", description = "The Post API")
+@SecurityRequirement(name = "JWT")
 @RestController
 @RequestMapping("api/v1/post")
 @AllArgsConstructor
-public class PostControler {
+public class PostControler implements SwaggerPostController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
     private final ObjectMapper objectMapper;
     private final PostService postService;
 
-    @Operation(summary = "Search by post ID")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Found post by ID successful",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class)))
-                    }),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Post was not found by id",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    })
-    })
     @GetMapping("/{id}")
     public ResponseEntity<Post> findById(@PathVariable int id) {
         Optional<Post> postFind = postService.findAllWitrUserAndFiles(id);
@@ -68,24 +53,6 @@ public class PostControler {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postFind.get());
     }
 
-    @Operation(summary = "Search by post User")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Found post by User successful",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class)))
-                    }),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "User was not found by id",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    })
-    })
     @GetMapping("/{user_id}")
     public ResponseEntity<List<Post>> findAllUser(@PathVariable int user_id,
                                               @RequestParam(value = "offset", defaultValue = "0") @Min(0) Integer offset,
@@ -98,24 +65,6 @@ public class PostControler {
 
     }
 
-    @Operation(summary = "Create post")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Create a post successful",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class)))
-                    }),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Error save Post",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    })
-    })
     @PostMapping("/")
     public ResponseEntity<Post> createPost(@RequestPart("post") PostDto post, @RequestPart("file") MultipartFile file) {
         Post postNew = null;
@@ -127,25 +76,6 @@ public class PostControler {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postNew);
     }
 
-    @Operation(summary = "Update post")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Create a post successful",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class)))
-                    }),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "User is not found by email",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Post.class))
-                    })
-    })
     @PutMapping("/")
     public ResponseEntity<Post> update(@RequestPart("post") PostDto post, @RequestPart("file") MultipartFile file) throws IOException {
         Optional<Post> postUpdate = postService.update(post, List.of(new FileDto(file.getOriginalFilename(), file.getBytes())));
@@ -157,23 +87,6 @@ public class PostControler {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postUpdate.get());
     }
 
-    @Operation(summary = "Delete post")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Delete post successful",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    }),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Post was not found",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json")
-                    })
-    })
     @DeleteMapping("/")
     public ResponseEntity delete(@RequestParam int id) {
         var rsl = postService.delete(id);
