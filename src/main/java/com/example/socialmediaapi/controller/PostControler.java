@@ -81,8 +81,6 @@ public class PostControler implements SwaggerPostController {
         Optional<Post> postUpdate = postService.update(post, List.of(new FileDto(file.getOriginalFilename(), file.getBytes())));
         if (postUpdate.isEmpty()) {
             throw new IllegalArgumentException("Not found the post with id: " + postUpdate.get().getMess());
-//        } else {
-//            return ResponseEntity.ok(postUpdate.get());
         }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postUpdate.get());
     }

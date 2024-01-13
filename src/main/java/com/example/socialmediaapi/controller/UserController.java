@@ -60,15 +60,9 @@ public class UserController implements SwaggerUserController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl.get());
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User rsl = null;
-        if (user.getEmail() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (user.getPassword() == null) {
-            throw new IllegalArgumentException("User password cannot be empty");
-        }
         try {
             rsl = userService.createUser(user);
         } catch (Exception e) {
@@ -89,12 +83,6 @@ public class UserController implements SwaggerUserController {
 
     @PostMapping("/friend")
     public ResponseEntity<User> addFriend(@Valid @RequestBody InviteDto inviteDto) {
-        if (inviteDto.getEmailUser() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (inviteDto.getEmailFriend() == null) {
-            throw new IllegalArgumentException("friend email cannot be empty");
-        }
         //отправка приглашения в друзья
         Optional<User> rslFriend = userService.addFriend(inviteDto);
         //добавление в качестве подписчика
@@ -104,30 +92,17 @@ public class UserController implements SwaggerUserController {
 
     @PutMapping("/friend")
     public ResponseEntity<Boolean> appruvFriend(@Valid @RequestBody InviteDto inviteDto) {
-        if (inviteDto.getEmailUser() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (inviteDto.getEmailFriend() == null) {
-            throw new IllegalArgumentException("friend email cannot be empty");
-        }
         System.out.println();
         //подтверждение приглашения в друзья
         Boolean rsl = userService.appruvFriend(inviteDto);
         //добавление в качестве подписчика
         Optional<User> rslSub = userService.addSubscriber(InviteDto.builder().emailFriend(inviteDto.getEmailUser()).emailUser(inviteDto.getEmailFriend()).build());
-
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rsl);
     }
 
     @DeleteMapping("/friend")
     public ResponseEntity<Boolean> delFriend(@Valid @RequestBody InviteDto inviteDto) {
-        if (inviteDto.getEmailUser() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (inviteDto.getEmailFriend() == null) {
-            throw new IllegalArgumentException("friend email cannot be empty");
-        }
-        //удаление из друзей
+         //удаление из друзей
         Boolean rsl = userService.delFriend(inviteDto);
         Boolean rsl1 = userService.delFriend(InviteDto.builder().emailFriend(inviteDto.getEmailUser()).emailUser(inviteDto.getEmailFriend()).build());
         //отписка
@@ -137,26 +112,14 @@ public class UserController implements SwaggerUserController {
 
     @PostMapping("/subscriber")
     public ResponseEntity<User> addSubscriber(@Valid @RequestBody InviteDto inviteDto) {
-        if (inviteDto.getEmailUser() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (inviteDto.getEmailFriend() == null) {
-            throw new IllegalArgumentException("friend email cannot be empty");
-        }
-        //добавление в качестве подписчика
+         //добавление в качестве подписчика
         Optional<User> rslSub = userService.addSubscriber(inviteDto);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
     }
 
     @DeleteMapping("/subscriber")
     public ResponseEntity<User> delSubscriber(@Valid @RequestBody InviteDto inviteDto) {
-        if (inviteDto.getEmailUser() == null) {
-            throw new IllegalArgumentException("user email cannot be empty");
-        }
-        if (inviteDto.getEmailFriend() == null) {
-            throw new IllegalArgumentException("friend email cannot be empty");
-        }
-        Optional<User> rslSub = userService.delSubscriber(inviteDto);
+         Optional<User> rslSub = userService.delSubscriber(inviteDto);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
     }
 

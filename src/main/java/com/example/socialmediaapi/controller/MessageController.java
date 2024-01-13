@@ -47,9 +47,6 @@ public class MessageController implements SwaggerMessageController {
 
     @PostMapping("/")
     public ResponseEntity<Boolean> addMessage(@RequestBody MessageDto messageDto) {
-        if (messageDto.getUser().getEmail() == null || messageDto.getUser().getEmail() == "") {
-            throw new ResponseStatusException(HttpStatus.OK, "Email cannot be empty");
-        }
         var rsl = messageService.addMessage(messageDto);
         if (rsl.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.OK, "User was not found by email");
