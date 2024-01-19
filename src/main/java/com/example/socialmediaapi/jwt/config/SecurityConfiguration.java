@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/user/**").hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.ADMIN_READ.getPermission())
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/user/**").hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.ADMIN_READ.getPermission())
                                 .requestMatchers(HttpMethod.DELETE, "/api/v1/user/**").hasAnyAuthority(Permission.ADMIN_WRITE.getPermission(), Permission.ADMIN_READ.getPermission())
+                                .requestMatchers(HttpMethod.GET, "/api/v1/message/**").hasAuthority(Permission.ADMIN_WRITE.getPermission())
                                 .anyRequest()
                                 .authenticated()
                 )

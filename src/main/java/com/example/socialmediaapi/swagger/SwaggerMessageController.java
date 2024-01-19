@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.constraints.Email;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public interface SwaggerMessageController {
                             )
                     })
     })
-    ResponseEntity<List<Message>> getAllMessageByUser(String email);
+    ResponseEntity<List<Message>> getAllMessageByUser(@Email String email);
 
     @Operation(summary = "Create a message")
     @ApiResponses(value = {

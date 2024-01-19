@@ -9,27 +9,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-//@NoArgsConstructor
 @AllArgsConstructor
-//@RequiredArgsConstructor
-//@Setter
 @Service
 public class UserService {
     private final UserRepository userRepository;
-//    private final InviteRepository inviteRepository;
-//    private final SubscriberRepository subscriberRepository;
-
-//    public UserService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-
-//    public UserService(InviteRepository inviteRepository) {
-//        this.inviteRepository = inviteRepository;
-//    }
-
-//    public UserService(SubscriberRepository subscriberRepository) {
-//        this.subscriberRepository = subscriberRepository;
-//    }
 
     public List<User> findAll() {
         var rsl = userRepository.findAll();
@@ -37,7 +20,6 @@ public class UserService {
     }
 
     public Optional<User> findById(int id) {
-//        var rsl = userRepository.findById(id);
         var rsl = userRepository.findByIdWithFriends(id);
         return rsl;
     }
@@ -48,7 +30,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-//        User user = new User(userDto.getEmail(), userDto.getPassword());
         var rsl = userRepository.save(user);
         return rsl;
     }
