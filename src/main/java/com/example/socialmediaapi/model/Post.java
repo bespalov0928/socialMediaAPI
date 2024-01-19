@@ -12,26 +12,10 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-//@NoArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "posts")
 public class Post {
-
-    public Post() {
-    }
-
-    public Post(int id, Date date, String mess, User user, List<File> files) {
-        this.id = id;
-        this.date = date;
-        this.mess = mess;
-        this.user = user;
-        this.files = files;
-    }
-
-    public Post(int id, String mess, User user) {
-        this.id = id;
-        this.mess = mess;
-        this.user = user;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +31,11 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
-    @JsonManagedReference
-    private List<File> files;
+
+//    @OneToMany(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "post_id")
+//    @JsonManagedReference
+//    private List<File> files;
 
     @Override
     public String toString() {
