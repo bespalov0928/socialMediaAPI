@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Builder
-//@Data
 @Getter
 @Setter
 @AllArgsConstructor
@@ -80,9 +79,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "user")
+//    private List<Token> tokens;
 
     @Override
     public String toString() {

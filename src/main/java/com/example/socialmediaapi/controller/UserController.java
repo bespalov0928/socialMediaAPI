@@ -7,19 +7,13 @@ import com.example.socialmediaapi.swagger.SwaggerUserController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +23,6 @@ import java.util.Optional;
 @RequestMapping("/api/v1/user")
 @AllArgsConstructor
 public class UserController implements SwaggerUserController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
@@ -52,7 +45,7 @@ public class UserController implements SwaggerUserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> findByEmail(@PathVariable String email) {
+    public ResponseEntity<User> findByEmail(@PathVariable @Email String email) {
         var rsl = userService.findByEmail(email);
         if (rsl.isEmpty()) {
             throw new IllegalArgumentException("User is not found by email: " + email);
@@ -72,7 +65,7 @@ public class UserController implements SwaggerUserController {
     }
 
     @PutMapping("/{email}")
-    public ResponseEntity<User> updateUser(@PathVariable String email, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable @Email String email, @RequestBody User user) {
         Optional<User> userOptional = userService.findByEmail(email);
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("User is not found by email: " + email);
@@ -122,17 +115,4 @@ public class UserController implements SwaggerUserController {
          Optional<User> rslSub = userService.delSubscriber(inviteDto);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(rslSub.get());
     }
-
-
-    @ExceptionHandler(value = IllegalArgumentException.class)
-    public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {{
-            put("message", e.getMessage());
-            put("type", e.getClass());
-        }}));
-        LOGGER.error(e.getLocalizedMessage());
-    }
-
 }

@@ -6,31 +6,20 @@ import com.example.socialmediaapi.model.Post;
 import com.example.socialmediaapi.service.PostService;
 import com.example.socialmediaapi.swagger.SwaggerPostController;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +29,6 @@ import java.util.Optional;
 @RequestMapping("api/v1/post")
 @AllArgsConstructor
 public class PostControler implements SwaggerPostController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class.getSimpleName());
     private final ObjectMapper objectMapper;
     private final PostService postService;
 
@@ -66,7 +54,7 @@ public class PostControler implements SwaggerPostController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Post> createPost(@RequestPart("post") PostDto post, @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<Post> createPost(@Valid  @RequestPart("post") PostDto post, @Valid  @RequestPart("file") MultipartFile file) {
         Post postNew = null;
         try {
             postNew = postService.create(post, List.of(new FileDto(file.getOriginalFilename(), file.getBytes())));
@@ -92,16 +80,5 @@ public class PostControler implements SwaggerPostController {
             throw new IllegalArgumentException("Post was not found");
         }
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler(value = IllegalArgumentException.class)
-    public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {{
-            put("message", e.getMessage());
-            put("type", e.getClass());
-        }}));
-        LOGGER.error(e.getLocalizedMessage());
     }
 }

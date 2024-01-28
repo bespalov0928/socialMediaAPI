@@ -11,11 +11,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class FileService {
     private final FileRepository fileRepository;
+
     @Value("${file.directory}")
     private String storageDirectory;
 

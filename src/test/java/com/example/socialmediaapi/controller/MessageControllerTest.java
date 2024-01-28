@@ -38,6 +38,7 @@ class MessageControllerTest {
 
         //when
         var responseEntity = this.messageController.getAllMessageByUser(user.getEmail());
+//        var responseEntity = this.messageController.getAllMessageByUser("user_testmail.ru");
 
         //then
         assertNotNull(responseEntity);
